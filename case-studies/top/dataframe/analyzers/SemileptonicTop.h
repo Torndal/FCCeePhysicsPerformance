@@ -71,9 +71,12 @@ namespace SemileptonicTop{
   //return particle set index in full RP collection as a vector
   ROOT::VecOps::RVec<int> RPParticleSetAssociation(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,std::unordered_set<int> idx);
 
-  //return invariant mass of the input collection
+  //return invariant mass of the RP input collection
   float RPsetInvariantMass(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
 
+  //return invariant mass from momentum components and energy
+  float InvMass(ROOT::VecOps::RVec<float> in_px, ROOT::VecOps::RVec<float> in_py, ROOT::VecOps::RVec<float> in_pz, ROOT::VecOps::RVec<float> in_e);
+  
   ROOT::VecOps::RVec<float> VertexSignificance(std::vector<std::vector<int>> in, std::vector<edm4hep::ReconstructedParticleData> RPin, ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
   
   //return sphericity based on ALEPH code

@@ -29,11 +29,13 @@ int main()
   Float_t tol = 1.0e-16;
 
   TChain* chain = new TChain("events");
-  chain->Add("outputs/semileptonic/p8_ee_ttbar_semi_ecm365.root");
+  chain->Add("outputs/semileptonic/p8_ee_ttbar_semi_ecm365_IDEAtrkCov.root");
 
   std::vector<TString> JetAlgos;
   JetAlgos.emplace_back(TString("kt"));
   JetAlgos.emplace_back(TString("durham"));
+  JetAlgos.emplace_back(TString("durhamE0"));
+  JetAlgos.emplace_back(TString("durhamp"));
   JetAlgos.emplace_back(TString("ee_antikt"));
   JetAlgos.emplace_back(TString("cambridge"));
   JetAlgos.emplace_back(TString("jade"));
@@ -162,9 +164,10 @@ int main()
     auto *hprofJetAbsMC  = new TProfile("hprofJetAbsMC","Profile plot for absolute energy difference",50,0,200,-100,100);
     auto *hprofJetRelMC  = new TProfile("hprofJetRelMC","Profile plot for relative energy difference",50,0,200,-100,100,"s"); //Compared to MC level jets
     auto *hprofJetRelMCUnique  = new TProfile("hprofJetRelMCUnique","Profile plot for relative energy difference only for unique events",50,0,200,-100,100,"s"); //Compared to MC level jets
-    TH1F *hBinnedEntriesMC = new TH1F("hBinnedEntriesMC", "Histogram to count entries in each bin",50,0,200); //Compared to MC level jets
-    TH1F *hBinnedUniqueEntries = new TH1F("hBinnedUniqueEntries", "Histogram to count uniquely matched jets in each bin",50,0,200); //Compared to MC level jets
-    TH1F *hUniqueEvents = new TH1F("hUniqueEvents", "Histogram to get fraction of unique events",50,0,200); //Compared to MC level jets
+    TH1F *hRecoJetEnergyBinned = new TH1F("hRecoJetEnergyBinned", "Histogram to count entries in each bin",50,0,200); 
+    TH1F *hParticleJetEnergyBinned = new TH1F("hParticleJetEnergyBinned", "Histogram to count entries in each bin",50,0,200); 
+    TH1F *hBinnedUniqueEntries = new TH1F("hBinnedUniqueEntries", "Histogram to count uniquely matched jets in each bin",50,0,200);
+    TH1F *hUniqueEvents = new TH1F("hUniqueEvents", "Histogram to get fraction of unique events",50,0,200); 
     
     TH1F *hConstituentsMatch = new TH1F("hConstituentsMatch","Constituents match in matched jets", 21, 0.0, 1.05);
     TH1F *hConstituentsMatchUnique = new TH1F("hConstituentsMatchUnique","Constituents match in uniquely matched jets", 21, 0.0, 1.05);
@@ -174,6 +177,8 @@ int main()
     TH1F *hbhadron2recojet = new TH1F("hbhadron2recojet","Distribution of b-hadrons in reco jets", 21, 0.0, 1.05);
     TH1F *hbhadron2recojetUnique = new TH1F("hbhadron2recojetUnique","Distribution of b-hadrons in reco jets", 21, 0.0, 1.05);
     TH1F *hbhadron2recojetNonunique = new TH1F("hbhadron2recojetNonunique","Distribution of b-hadrons in reco jets", 21, 0.0, 1.05);
+    TH1F *hFullSeparationReco = new TH1F("hFullSeparationReco", "Histogram to get fraction of events with full separation into reco jets",50,0,200);
+    TH1F *hFullSeparationParticle = new TH1F("hFullSeparationParticle", "Histogram to get fraction of events with full separation into particle jets",50,0,200);
     //How often do I find at least two reconstructed objects from b-hadron?
     TH1F *hbhadron2RP = new TH1F("hbhadron2RP","Distribution of number of reconstructed b-hadron decay productss", 31, -0.5, 30.5);
     //How many different different b-hadrons from which I have reconstructed particles (to see how many I loose)
@@ -442,7 +447,7 @@ int main()
 	hprofJetRelMC->Fill(jete,jet_diffrel,1);
 	//Filling histogram with same binning as profile plot to get number of entries in each bin
 	//Used for calculating the error on error (assuming Gaussian): sqrt(2*n/std^4)
-	hBinnedEntriesMC->Fill(jete); 
+	hRecoJetEnergyBinned->Fill(jete); 
 	unordered_set<int>::const_iterator got = nMCjet.find (jetmatch);
 	if ( got == nMCjet.end() ) {
 	  nMCjet.insert(jetmatch);
@@ -587,9 +592,12 @@ int main()
 	countingparticlejets++;
       }
       unordered_multiset<int> UniquebtaggedJets={1,1,0,0};
-      if (btaggedParticleJets==UniquebtaggedJets) uniguebtaggedparticleJetmatching++;//cout << "*********Uniquely b-tagged jets" << endl;
+      if (btaggedParticleJets==UniquebtaggedJets) {
+	uniguebtaggedparticleJetmatching++;//cout << "*********Uniquely b-tagged jets" << endl;
+	for (UInt_t i=0; i<particlejets_jetalgo_e->size();i++) hFullSeparationParticle->Fill(particlejets_jetalgo_e->at(i));
+      }
       else nonuniguebtaggedparticleJetmatching++; //cout << "*********Not uniquely b-tagged jets" << endl;
-      
+      for (UInt_t i=0; i<particlejets_jetalgo_e->size();i++) hParticleJetEnergyBinned->Fill(particlejets_jetalgo_e->at(i));
       float btagparticlefraction;
       for (auto bhadron : allparticlebhadrons) {
 	vector<int> count;
@@ -659,7 +667,10 @@ int main()
 	for (auto bhadron : bhadrons) allrecobhadrons.insert(bhadron);
 	allrecobtags.push_back(btags);
       }
-      if (btaggedRecoJets==UniquebtaggedJets) uniguebtaggedrecoJetmatching++;//cout << "*********Uniquely b-tagged jets" << endl;
+      if (btaggedRecoJets==UniquebtaggedJets){
+	uniguebtaggedrecoJetmatching++;//cout << "*********Uniquely b-tagged jets" << endl;
+        for (UInt_t i=0; i<recojets_jetalgo_e->size();i++) hFullSeparationReco->Fill(recojets_jetalgo_e->at(i));
+      }
       else nonuniguebtaggedrecoJetmatching++; //cout << "*********Not uniquely b-tagged jets" << endl;
       
       float btagrecofraction;
@@ -729,8 +740,11 @@ int main()
     cout << "Events with full separation of b-hadron decay products into particle jets: " << uniguebtaggedparticleJetmatching  << "/" << all << "=" << float(uniguebtaggedparticleJetmatching)/float(all) <<endl;
     cout << "Events with full separation of b-hadron decay products into reco jets: " << uniguebtaggedrecoJetmatching << "/" << all << "=" << float(uniguebtaggedrecoJetmatching)/float(all) <<endl; 
     
-    hUniqueEvents->Divide(hBinnedEntriesMC);
+    hUniqueEvents->Divide(hRecoJetEnergyBinned);
+    hFullSeparationReco->Divide(hRecoJetEnergyBinned);
+    hFullSeparationParticle->Divide(hParticleJetEnergyBinned);
 
+    
     hprofLepton->SetDirectory(outFile);
     hJetCosOpeningAngle->SetDirectory(outFile);
     hprofJetRel->SetDirectory(outFile);
@@ -739,7 +753,7 @@ int main()
     hprofJetRelMC->SetDirectory(outFile);
     hprofJetAbsMC->SetDirectory(outFile);
     hprofJetRelMCUnique->SetDirectory(outFile);
-    hBinnedEntriesMC->SetDirectory(outFile);
+    hRecoJetEnergyBinned->SetDirectory(outFile);
     hBinnedUniqueEntries->SetDirectory(outFile);
     hUniqueEvents->SetDirectory(outFile);
     hConstituentsMatch->SetDirectory(outFile);  
@@ -749,6 +763,8 @@ int main()
     hbhadron2recojet->SetDirectory(outFile);
     hbhadron2recojetUnique->SetDirectory(outFile);
     hbhadron2recojetNonunique->SetDirectory(outFile);
+    hFullSeparationReco->SetDirectory(outFile);
+    hFullSeparationParticle->SetDirectory(outFile);
     hbhadronTypes->SetDirectory(outFile);
     hbhadron2RP->SetDirectory(outFile);
     hDeltaR->SetDirectory(outFile);
@@ -825,7 +841,7 @@ int main()
     gJetRelMC->SetTitle("Energy resolution of RP vs. MC jets");
     //gJetRelMC->SetTitleSize(0.1);                                                                                                                                                    
     for (int i=0 ; i<hprofJetRelMC->GetNbinsX();i++){
-      double n = hBinnedEntriesMC->GetBinContent(i);
+      double n = hRecoJetEnergyBinned->GetBinContent(i);
       if (n<2) continue;
       double Std = hprofJetRelMC->GetBinError(i);
       double energy = hprofJetRelMC->GetXaxis()->GetBinCenter(i);

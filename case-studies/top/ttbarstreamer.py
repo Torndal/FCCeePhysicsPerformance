@@ -178,13 +178,16 @@ class analysis():
                ################## Durham ###################
                #run jet clustering with reconstructed particles. Durham_algorithm, exclusive clustering, exactly 4 jets, sorted by E, E-scheme  
                .Define("FCCAnalysesRecoJets_durham", "JetClustering::clustering_ee_kt(2, 4, 1, 0)(reco_jets)")
-               .Define("recojets_durham",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesRecoJets_durham)")
-               .Define("recojetconstituents_durham","JetClusteringUtils::get_constituents(FCCAnalysesRecoJets_durham)")
-               .Define("recojets_durham_px",        "JetClusteringUtils::get_px(recojets_durham)")
-               .Define("recojets_durham_py",        "JetClusteringUtils::get_py(recojets_durham)")
-               .Define("recojets_durham_pz",        "JetClusteringUtils::get_pz(recojets_durham)")
-               .Define("recojets_durham_e",        "JetClusteringUtils::get_e(recojets_durham)")
-               .Define("recojets_durham_btag",      "JetClusteringUtils::get_btag(recojets_durham, Particle, 1.00)")
+               .Define("recojets_durham",            "JetClusteringUtils::get_pseudoJets(FCCAnalysesRecoJets_durham)")
+               .Define("recojetconstituents_durham", "JetClusteringUtils::get_constituents(FCCAnalysesRecoJets_durham)")
+               .Define("recojets_durham_dmin",       "JetClusteringUtils::get_dmerge(FCCAnalysesRecoJets_durham)")
+               .Define("recojetymerge_durham",       "JetClusteringUtils::get_ymerge(FCCAnalysesRecoJets_durham)")
+               .Define("recojets_durham_px",         "JetClusteringUtils::get_px(recojets_durham)")
+               .Define("recojets_durham_py",         "JetClusteringUtils::get_py(recojets_durham)")
+               .Define("recojets_durham_pz",         "JetClusteringUtils::get_pz(recojets_durham)")
+               .Define("recojets_durham_e",          "JetClusteringUtils::get_e(recojets_durham)")
+               .Define("recojets_durham_flavour",    "JetTaggingUtils::get_flavour(recojets_durham, Particle)")
+               .Define("recojets_durham_btag",       "JetTaggingUtils::get_btag(recojets_durham_flavour, 1.00)")
                
                .Define("FCCAnalysesParticleJets_durham", "JetClustering::clustering_ee_kt(2, 4, 1, 0)(particle_jets)")
                .Define("particlejets_durham",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesParticleJets_durham)")
@@ -193,6 +196,9 @@ class analysis():
                .Define("particlejets_durham_py",        "JetClusteringUtils::get_py(particlejets_durham)")
                .Define("particlejets_durham_pz",        "JetClusteringUtils::get_pz(particlejets_durham)")
                .Define("particlejets_durham_e",        "JetClusteringUtils::get_e(particlejets_durham)")
+               .Define("particlejets_durham_flavour",    "JetTaggingUtils::get_flavour(particlejets_durham, Particle)")
+               .Define("particlejets_durham_btag",       "JetTaggingUtils::get_btag(particlejets_durham_flavour, 1.00)")
+
 
                .Define("FCCAnalysesPartonJets_durham", "JetClustering::clustering_ee_kt(2, 4, 1, 0)(parton_jets)")
                .Define("partonjets_durham",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesPartonJets_durham)")
@@ -201,25 +207,67 @@ class analysis():
                .Define("partonjets_durham_py",        "JetClusteringUtils::get_py(partonjets_durham)")
                .Define("partonjets_durham_pz",        "JetClusteringUtils::get_pz(partonjets_durham)")
                .Define("partonjets_durham_e",        "JetClusteringUtils::get_e(partonjets_durham)")
+               .Define("partonjets_durham_flavour",    "JetTaggingUtils::get_flavour(partonjets_durham, Particle)")
+               .Define("partonjets_durham_btag",       "JetTaggingUtils::get_btag(partonjets_durham_flavour, 1.00)")
+
+               #run jet clustering with reconstructed particles. Durham_algorithm, exclusive clustering, exactly 4 jets, sorted by E, E0-scheme  
+               .Define("FCCAnalysesRecoJets_durhamE0", "JetClustering::clustering_ee_kt(2, 4, 1, 10)(reco_jets)")
+               .Define("recojets_durhamE0",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesRecoJets_durhamE0)")
+               .Define("recojetconstituents_durhamE0","JetClusteringUtils::get_constituents(FCCAnalysesRecoJets_durhamE0)")
+               .Define("recojets_durhamE0_px",        "JetClusteringUtils::get_px(recojets_durhamE0)")
+               .Define("recojets_durhamE0_py",        "JetClusteringUtils::get_py(recojets_durhamE0)")
+               .Define("recojets_durhamE0_pz",        "JetClusteringUtils::get_pz(recojets_durhamE0)")
+               .Define("recojets_durhamE0_e",        "JetClusteringUtils::get_e(recojets_durhamE0)")
+               .Define("recojets_durhamE0_flavour",    "JetTaggingUtils::get_flavour(recojets_durhamE0, Particle)")
+               .Define("recojets_durhamE0_btag",       "JetTaggingUtils::get_btag(recojets_durhamE0_flavour, 1.00)")
+               
+               .Define("FCCAnalysesParticleJets_durhamE0", "JetClustering::clustering_ee_kt(2, 4, 1, 10)(particle_jets)")
+               .Define("particlejets_durhamE0",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesParticleJets_durhamE0)")
+               .Define("particlejetconstituents_durhamE0","JetClusteringUtils::get_constituents(FCCAnalysesParticleJets_durhamE0)")
+               .Define("particlejets_durhamE0_px",        "JetClusteringUtils::get_px(particlejets_durhamE0)")
+               .Define("particlejets_durhamE0_py",        "JetClusteringUtils::get_py(particlejets_durhamE0)")
+               .Define("particlejets_durhamE0_pz",        "JetClusteringUtils::get_pz(particlejets_durhamE0)")
+               .Define("particlejets_durhamE0_e",        "JetClusteringUtils::get_e(particlejets_durhamE0)")
+
+               #run jet clustering with reconstructed particles. Durham_algorithm, exclusive clustering, exactly 4 jets, sorted by E, p-scheme  
+               .Define("FCCAnalysesRecoJets_durhamp", "JetClustering::clustering_ee_kt(2, 4, 1,11)(reco_jets)")
+               .Define("recojets_durhamp",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesRecoJets_durhamp)")
+               .Define("recojetconstituents_durhamp","JetClusteringUtils::get_constituents(FCCAnalysesRecoJets_durhamp)")
+               .Define("recojets_durhamp_px",        "JetClusteringUtils::get_px(recojets_durhamp)")
+               .Define("recojets_durhamp_py",        "JetClusteringUtils::get_py(recojets_durhamp)")
+               .Define("recojets_durhamp_pz",        "JetClusteringUtils::get_pz(recojets_durhamp)")
+               .Define("recojets_durhamp_e",        "JetClusteringUtils::get_e(recojets_durhamp)")
+               .Define("recojets_durhamp_flavour",    "JetTaggingUtils::get_flavour(recojets_durhamp, Particle)")
+               .Define("recojets_durhamp_btag",       "JetTaggingUtils::get_btag(recojets_durhamp_flavour, 1.00)")
+               
+               .Define("FCCAnalysesParticleJets_durhamp", "JetClustering::clustering_ee_kt(2, 4, 1, 11)(particle_jets)")
+               .Define("particlejets_durhamp",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesParticleJets_durhamp)")
+               .Define("particlejetconstituents_durhamp","JetClusteringUtils::get_constituents(FCCAnalysesParticleJets_durhamp)")
+               .Define("particlejets_durhamp_px",        "JetClusteringUtils::get_px(particlejets_durhamp)")
+               .Define("particlejets_durhamp_py",        "JetClusteringUtils::get_py(particlejets_durhamp)")
+               .Define("particlejets_durhamp_pz",        "JetClusteringUtils::get_pz(particlejets_durhamp)")
+               .Define("particlejets_durhamp_e",        "JetClusteringUtils::get_e(particlejets_durhamp)")
 
                #------------ Vertexing ---------------------
-               .Define("recojetconstituents_durham0", "recojetconstituents_durham.at(0)")
-               .Define("Set_constituents", "SemileptonicTop::vector2selector(recojetconstituents_durham0)")
+               #.Define("recojetconstituents_durham0", "recojetconstituents_durham.at(0)")
+               #.Define("Set_constituents", "SemileptonicTop::vector2selector(recojetconstituents_durham0)")
                #constituents point to the subset of particle that's needed as input to get the right association
-               .Define("RP_constituents",         "SemileptonicTop::RPParticleSetCreator(RPrest, Set_constituents)")
-               .Define("VertexObject",  "VertexFitterSimple::VertexFitter( 1, RP_constituents, EFlowTrack_1 )")
-               .Define("Vertex",        "VertexingUtils::get_VertexData( VertexObject )")    # primary vertex, in mm
-               .Define("Vertex_x", "Vertex.position.x")
-               .Define("Vertex_y", "Vertex.position.y")
-               .Define("Vertex_z", "Vertex.position.z")
-               .Define("covMatrix_xx", "Vertex.covMatrix[0]")
-               .Define("covMatrix_yx", "Vertex.covMatrix[1]")
-               .Define("covMatrix_zx", "Vertex.covMatrix[2]")
-               .Define("covMatrix_yy", "Vertex.covMatrix[3]")
-               .Define("covMatrix_zy", "Vertex.covMatrix[4]")
-               .Define("covMatrix_zz", "Vertex.covMatrix[5]")
+               #.Define("RP_constituents",         "SemileptonicTop::RPParticleSetCreator(RPrest, Set_constituents)")
+               #.Define("VertexObject",  "VertexFitterSimple::VertexFitter( 1, RP_constituents, EFlowTrack_1 )")
+               #.Define("Vertex",        "VertexingUtils::get_VertexData( VertexObject )")    # primary vertex, in mm
+               #.Define("Vertex_x", "Vertex.position.x")
+               #.Define("Vertex_y", "Vertex.position.y")
+               #.Define("Vertex_z", "Vertex.position.z")
+               #.Define("covMatrix_xx", "Vertex.covMatrix[0]")
+               #.Define("covMatrix_yx", "Vertex.covMatrix[1]")
+               #.Define("covMatrix_zx", "Vertex.covMatrix[2]")
+               #.Define("covMatrix_yy", "Vertex.covMatrix[3]")
+               #.Define("covMatrix_zy", "Vertex.covMatrix[4]")
+               #.Define("covMatrix_zz", "Vertex.covMatrix[5]")
 
-               .Define("Significance", "SemileptonicTop::VertexSignificance(recojetconstituents_durham, RPrest, EFlowTrack_1)")
+               .Define("Significance_reco", "SemileptonicTop::VertexSignificance(recojetconstituents_durham, RPrest, EFlowTrack_1)")
+               .Define("Significance_particle", "SemileptonicTop::VertexSignificance(particlejetconstituents_durham, RPrest, EFlowTrack_1)")
+               .Define("Significance_parton", "SemileptonicTop::VertexSignificance(partonjetconstituents_durham, RPrest, EFlowTrack_1)")
                
                ################## ee anti-kT ###################
                #run jet clustering with reconstructed particles. ee_anti-kT_algorithm, exclusive clustering, exactly 4 jets, sorted by E, E-scheme 
@@ -411,6 +459,27 @@ class analysis():
                 "partonjets_durham_e",
                 "partonjetconstituents_durham",
 
+                "recojets_durhamE0_px",
+                "recojets_durhamE0_py",
+                "recojets_durhamE0_pz",
+                "recojets_durhamE0_e",
+                "recojetconstituents_durhamE0",
+                "particlejets_durhamE0_px",
+                "particlejets_durhamE0_py",
+                "particlejets_durhamE0_pz",
+                "particlejets_durhamE0_e",
+                "particlejetconstituents_durhamE0",
+                "recojets_durhamp_px",
+                "recojets_durhamp_py",
+                "recojets_durhamp_pz",
+                "recojets_durhamp_e",
+                "recojetconstituents_durhamp",
+                "particlejets_durhamp_px",
+                "particlejets_durhamp_py",
+                "particlejets_durhamp_pz",
+                "particlejets_durhamp_e",
+                "particlejetconstituents_durhamp",
+
                 "recojets_ee_antikt_px",
                 "recojets_ee_antikt_py",
                 "recojets_ee_antikt_pz",
@@ -475,18 +544,13 @@ class analysis():
                 "partonjets_valencia_e",
                 "partonjetconstituents_valencia",
 
-                "Vertex_x",
-                "Vertex_y",
-                "Vertex_z",
-                "covMatrix_xx",
-                "covMatrix_yx",
-                "covMatrix_zx",
-                "covMatrix_yy",
-                "covMatrix_zy",
-                "covMatrix_zz",
-                "Significance",
+                "Significance_reco",
+                "Significance_particle",
+                "Significance_parton",
                 "recojets_durham_btag",
-                
+                "recojets_durhamE0_btag",
+                "recojets_durhamp_btag",
+                "recojets_durham_dmin",
                 ]:
             branchList.push_back(branchName)
         df2.Snapshot("events", self.outname, branchList)

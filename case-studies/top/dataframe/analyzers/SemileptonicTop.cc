@@ -200,6 +200,21 @@ float SemileptonicTop::RPsetInvariantMass(ROOT::VecOps::RVec<edm4hep::Reconstruc
 
 }
 
+float SemileptonicTop::InvMass(ROOT::VecOps::RVec<float> in_px, ROOT::VecOps::RVec<float> in_py, ROOT::VecOps::RVec<float> in_pz, ROOT::VecOps::RVec<float> in_e) {
+  float E=0;
+  float px=0;
+  float py=0;
+  float pz=0;
+  for (size_t i = 0; i < in_px.size(); ++i) {
+    E+=in_e.at(i);
+    px+=in_px.at(i);
+    py+=in_py.at(i);
+    pz+=in_pz.at(i);
+  }
+  float result = sqrt(pow(E,2)-pow(px,2)-pow(py,2)-pow(pz,2));
+  return result;
+}
+
 ROOT::VecOps::RVec<float> SemileptonicTop::VertexSignificance(std::vector<std::vector<int>> in, std::vector<edm4hep::ReconstructedParticleData> RPin, ROOT::VecOps::RVec<edm4hep::TrackState> tracks) {
   ROOT::VecOps::RVec<float> result;
   for (auto v : in){
@@ -210,15 +225,14 @@ ROOT::VecOps::RVec<float> SemileptonicTop::VertexSignificance(std::vector<std::v
     float x=Vertex.position.x;
     float y=Vertex.position.y;
     float z=Vertex.position.z;
-    float distance=sqrt(x*x+y*y+z*z); //distance to IP (0,0,0)
-    //float distance=sqrt(Vertex.position.x*Vertex.position.x+Vertex.position.y*Vertex.position.y+Vertex.position.z*Vertex.position.z); //distance to IP (0,0,0)
+    float distance2=x*x+y*y+z*z; //distance to IP (0,0,0)  
     float cov_xx = Vertex.covMatrix[0];
     float cov_yx = Vertex.covMatrix[1];
-    float cov_zx = Vertex.covMatrix[2];
-    float cov_yy = Vertex.covMatrix[3];
+    float cov_yy = Vertex.covMatrix[2];
+    float cov_zx = Vertex.covMatrix[3];
     float cov_zy = Vertex.covMatrix[4];
     float cov_zz = Vertex.covMatrix[5];
-    float significance=(x*x*cov_xx+y*y*cov_yy+z*z*cov_zz+2*(x*y*cov_yx+x*z*cov_zx+y*z*cov_zy))/distance;
+    float significance=distance2/sqrt(x*x*cov_xx+y*y*cov_yy+z*z*cov_zz+2*(x*y*cov_yx+x*z*cov_zx+y*z*cov_zy));
     result.push_back(significance);
   }
   return result;
